@@ -3,6 +3,7 @@ Color:
 <% @palettes.each do |palette| %>
   <% palette["colors"].each do |color| %>
     <%= color %>
+    <%= WCAGColorContrast.ratio(@hex, color) %>
   <% end %>
   <br />
 <% end %>
