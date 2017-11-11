@@ -3,6 +3,11 @@ class SearchController < ApplicationController
   end
 
   def show
-    @a = params[:hex]
+    @hex = params[:hex]
+
+    @palettes = Faraday.get(
+      "http://www.colourlovers.com/api/palettes?format=json&hex=#{@hex}"
+    )
+    @palettes = JSON.parse(@palettes.body)
   end
 end
