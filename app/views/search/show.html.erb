@@ -1,9 +1,14 @@
-Color:
-
+<h1>Background color: <%= @hex %></h1>
 <% @palettes.each do |palette| %>
+  <h2>Palette:</h2>
   <% palette["colors"].each do |color| %>
-    <%= color %>
-    <%= WCAGColorContrast.ratio(@hex, color) %>
+    <div style="display: inline-block; width: 100px; height: 100px; margin-right: 20px; background-color: #<%= color %>">
+      <%= color %>
+      <span style="color: red">
+        <%= ratio(@hex, color) %>
+      </span>
+    </div>
   <% end %>
+  <br />
   <br />
 <% end %>
