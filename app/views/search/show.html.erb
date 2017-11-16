@@ -1,14 +1,40 @@
-<h1>Background color: <%= @hex %></h1>
+<%= form_tag search_show_path(params.to_h), method: :get do %>
+  <%= check_box_tag(:text_normal, 1, params[:text_normal].present?) %>
+  <%= label_tag(:text_normal, "Normal") %>
+  <%= check_box_tag(:text_large, 1, params[:text_large].present?) %>
+  <%= label_tag(:text_large, "Large") %>
+
+  <br />
+
+  <% MATCHES.each do |k,v| %>
+    <%= radio_button_tag :matches, v, @matches == v %>
+    <%= label_tag k %>
+  <% end %>
+
+  <br />
+  <%= hidden_field_tag :bg_color, URI.encode(@bg_color) %>
+  <%= submit_tag "Search" %>
+<% end %>
+
+<h1>Background color: <%= @bg_color %></h1>
 <% @palettes.each do |palette| %>
   <h2>Palette:</h2>
   <% palette["colors"].each do |color| %>
     <div style="display: inline-block; width: 100px; height: 100px; margin-right: 20px; background-color: #<%= color %>">
       <%= color %>
       <span style="color: red">
-        <%= ratio(@hex, color) %>
+        <%= ratio(@bg_color, color) %>
       </span>
     </div>
   <% end %>
+
+  <%= passes?(palette, @bg_color, @score, @matches) %>
   <br />
   <br />
+
+  <% if @page > 0 %>
+    <%= link_to "Previous page", search_show_path(params.merge(page: 0)) %>
+  <% end %>
+
+  <%= link_to "Next page", search_show_path(params.merge(page: @page+1)) %>
 <% end %>

@@ -3,7 +3,7 @@
 <%= flash[:alert] %>
 
 <%= form_tag search_show_path, method: :get do %>
-  <%= label_tag(:hex, "Insert hex:") %>
-  <%= text_field_tag(:hex) %>
+  <%= label_tag(:bg_color, "Insert color:") %>
+  <%= text_field_tag(:bg_color) %>
   <%= submit_tag("Search") %>
 <% end %>
