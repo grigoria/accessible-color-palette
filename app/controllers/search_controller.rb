@@ -1,13 +1,6 @@
-SCORES = [3, 4.5, 7]
-MATCHES = {
-  "Don't check" => 0,
-  "At least 1"  => 1,
-  "At least 2"  => 2,
-  "At least 3"  => 3,
-  "All"         => 4,
-}
-
 class SearchController < ApplicationController
+  include ApplicationHelper
+
   def index
   end
 
@@ -19,23 +12,28 @@ class SearchController < ApplicationController
       return
     end
 
-    @page = (params[:page] || 0).to_i
-
     # filters
-    @score = (params[:score] || SCORES[0]).to_f
-    @matches = (params[:matches] || 0).to_i
+    @page = (params[:page] || 0).to_i
+    @level = params[:level] || "AA"
+    @size = (params[:size] || SIZES).sort
+    @size = @size[0] if @size.length == 1
+    @ratio = Float(RATIOS[@level][@size])
+    @matches = (params[:matches] || 1).to_i
 
     qs = {
       format: "json",
       orderCol: "score",
       sortBy: "DESC",
       hex: @bg_color[1..-1],
-      numResults: 50,
+      numResults: 100,
       resultOffset: @page
     }.to_query
 
     @palettes = JSON.parse(Faraday.get(
       "http://www.colourlovers.com/api/palettes?#{qs}"
     ).body)
+    puts "http://www.colourlovers.com/api/palettes?#{qs}"
+
+    @palettes.select! { |p| passes?(p, @bg_color, @ratio, @matches) }
   end
 end

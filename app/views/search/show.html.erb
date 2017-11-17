@@ -1,20 +1,30 @@
-<%= form_tag search_show_path(params.to_h), method: :get do %>
-  <%= check_box_tag(:text_normal, 1, params[:text_normal].present?) %>
-  <%= label_tag(:text_normal, "Normal") %>
-  <%= check_box_tag(:text_large, 1, params[:text_large].present?) %>
-  <%= label_tag(:text_large, "Large") %>
-
-  <br />
-
-  <% MATCHES.each do |k,v| %>
-    <%= radio_button_tag :matches, v, @matches == v %>
-    <%= label_tag k %>
+<%= form_tag search_show_path(request.query_parameters), method: :get do %>
+  <% RATIOS.each do |level, _| %>
+    <%= radio_button_tag :level, level, (@level == level) %>
+    <%= label_tag :level, level.upcase %>
   <% end %>
 
   <br />
+
+  <% SIZES.each do |s|  %>
+    <%= check_box_tag "size[]", s, @size.include?(s) %>
+    <%= label_tag s %>
+  <% end %>
+
+  <br />
+
+  <% MATCHES.each do |human, v| %>
+    <%= radio_button_tag :matches, v, @matches == v %>
+    <%= label_tag human %>
+  <% end %>
+
+  <br />
+
   <%= hidden_field_tag :bg_color, URI.encode(@bg_color) %>
   <%= submit_tag "Search" %>
 <% end %>
+
+required ratio: <%= @ratio %>
 
 <h1>Background color: <%= @bg_color %></h1>
 <% @palettes.each do |palette| %>
@@ -28,13 +38,12 @@
     </div>
   <% end %>
 
-  <%= passes?(palette, @bg_color, @score, @matches) %>
-  <br />
+  <%= passes?(palette, @bg_color, @ratio, @matches) %>
   <br />
 
   <% if @page > 0 %>
-    <%= link_to "Previous page", search_show_path(params.merge(page: 0)) %>
+    <%= link_to "Previous page", search_show_path(request.query_parameters.merge(page: 0)) %>
   <% end %>
 
-  <%= link_to "Next page", search_show_path(params.merge(page: @page+1)) %>
+  <%= link_to "Next page", search_show_path(request.query_parameters.merge(page: @page+1)) %>
 <% end %>
